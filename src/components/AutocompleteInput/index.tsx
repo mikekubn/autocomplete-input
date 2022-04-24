@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from 'react';
 import * as CmpLabel from '@radix-ui/react-label';
 import { styled } from '@stitches/react';
@@ -80,17 +81,24 @@ const AutocompleteInput = ({
           {`Found items: ${dataSource.length}`}
         </div>
       </Flex>
-      <Input
-        type="text"
-        id="auto-input"
-        data-testid="input"
-        required
-        placeholder={placeholder}
-        disabled={disabled}
-        onChange={handleChange}
-        value={value.value || ''}
-        autoComplete="off"
-      />
+      <Flex css={{ position: 'relative' }}>
+        <ClearBox
+          onClick={() => filterValue(defaultValue)}
+        >
+          <Image src="/image/delete.png" />
+        </ClearBox>
+        <Input
+          type="text"
+          id="auto-input"
+          data-testid="input"
+          required
+          placeholder={placeholder}
+          disabled={disabled}
+          onChange={handleChange}
+          value={value.value || ''}
+          autoComplete="off"
+        />
+      </Flex>
       {
         isOpen
           ? (
@@ -160,4 +168,27 @@ const TextFieldItem = styled('li', {
   '&:hover': {
     backgroundColor: '#f0f0f0',
   },
+});
+
+const ClearBox = styled('div', {
+  position: 'absolute',
+  height: '30px',
+  width: '30px',
+  right: '15px',
+  top: '20px',
+  cursor: 'pointer',
+
+  '&:hover': {
+    backgroundColor: '#f0f0f0',
+    borderRadius: '20px',
+  },
+});
+
+const Image = styled('img', {
+  width: '25px',
+  height: '25px',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
 });
