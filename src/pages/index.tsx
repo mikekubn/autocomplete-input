@@ -3,8 +3,8 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { styled } from '@stitches/react';
 import useSWR from 'swr';
-import AutocompleteInput, { defaultValue, ITextFieldItem } from '@/components/AutocompleteInput';
-import { fetcher } from '@/utils/fetcher';
+import AutocompleteInput, { defaultValue, ITextFieldItem } from '../components/AutocompleteInput';
+import { fetcher } from '../../utils/fetcher';
 
 const Home: NextPage = (): React.ReactElement => {
   const [curentValue, setCurentValue] = React.useState<ITextFieldItem>(defaultValue);

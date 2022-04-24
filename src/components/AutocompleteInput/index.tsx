@@ -1,8 +1,8 @@
 import React from 'react';
 import * as CmpLabel from '@radix-ui/react-label';
 import { styled } from '@stitches/react';
+import useOutsideClick from '../../hooks/useOutSideClick';
 import { Flex } from '../components';
-import useOutsideClick from '@/hooks/useOutSideClick';
 
 export interface ITextFieldItem {
   id: number,
@@ -16,8 +16,7 @@ interface IAutocompleteInput{
   placeholder: string,
   disabled?: boolean,
   exactMatch?: boolean,
-  timeout: number,
-  loading?: boolean,
+  timeout?: number,
   value: ITextFieldItem,
   getDataSource: () => ITextFieldItem[],
   filterValue: (val: ITextFieldItem) => void,
@@ -26,7 +25,7 @@ interface IAutocompleteInput{
 }
 
 const AutocompleteInput = ({
-  label, placeholder, disabled, loading, timeout, getDataSource, value, filterValue, exactMatch, onChange, onFilterValueChange,
+  label, placeholder, disabled, timeout, getDataSource, value, filterValue, exactMatch, onChange, onFilterValueChange,
 }: IAutocompleteInput): React.ReactElement => {
   const [open, setOpen] = React.useState<boolean>(false);
   const [event, setEvent] = React.useState<React.ChangeEvent<HTMLInputElement>>();
