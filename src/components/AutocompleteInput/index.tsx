@@ -89,6 +89,7 @@ const AutocompleteInput = ({
         <Input
           type="text"
           id="auto-input"
+          aria-label="text-input"
           data-testid="input"
           required
           placeholder={placeholder}
