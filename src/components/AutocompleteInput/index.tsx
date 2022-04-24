@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
 import React from 'react';
 import * as CmpLabel from '@radix-ui/react-label';
 import { styled } from '@stitches/react';
