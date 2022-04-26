@@ -3,19 +3,14 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { styled } from '@stitches/react';
 import useSWR from 'swr';
-import AutocompleteInput, { defaultValue, ITextFieldItem } from '../components/AutocompleteInput';
+import AutocompleteInput, { ITextFieldItem } from '../components/AutocompleteInput';
 import { fetcher } from '../../utils/fetcher';
 
 const Home: NextPage = (): React.ReactElement => {
-  const [curentValue, setCurentValue] = React.useState<ITextFieldItem>(defaultValue);
+  const [filterValueChange, setFilterValueChange] = React.useState<string>('');
+  const [valueChange, setValueChange] = React.useState<ITextFieldItem>({ id: 0, value: '' });
 
-  // const { data: users } = useSWR('https://reqres.in/api/users', fetcher);
   const { data } = useSWR('https://api.stg.behavera.com/v1/data_sources/preferences?lang=EN', fetcher);
-
-  // const getEntryValues = (values: { id: number, email: string }[]) => values?.map((item) => ({
-  //   id: item.id,
-  //   value: item.email,
-  // }));
 
   const getEntryValues = (values: { value: number, label: string }[]) => values?.map((item) => ({
     id: item.value,
@@ -33,25 +28,25 @@ const Home: NextPage = (): React.ReactElement => {
         <AutocompleteInput
           label="Autocomplete Input"
           placeholder="Write here..."
-          getDataSource={() => {
+          getDataSource={(val) => {
             const entryValues = getEntryValues(data?.payload?.industries);
             let matches: ITextFieldItem[] = [];
-            if (curentValue) {
-              if (curentValue?.value?.length > 0) {
-                matches = entryValues.filter((item: { id: number, value: string }) => {
-                  const regex = new RegExp(`${curentValue.value}`, 'gi');
+            if (val) {
+              if (val?.length > 0) {
+                matches = entryValues?.filter((item: { id: number, value: string }) => {
+                  const regex = new RegExp(`${val}`, 'gi');
                   return item.value.match(regex);
                 });
               }
             }
             return matches;
           }}
-          filterValue={(val) => setCurentValue(val)}
-          value={curentValue}
+          filterValue={filterValueChange}
+          value={valueChange}
           exactMatch
           timeout={1500}
-          onChange={(val) => console.log('onChange', val)}
-          onFilterValueChange={(val) => console.log('onFilterValueChange', val)}
+          onValueChange={(val) => setValueChange(val)}
+          onFilterValueChange={(val) => setFilterValueChange(val)}
         />
       </Wrapper>
     </>
@@ -64,3 +59,9 @@ const Wrapper = styled('div', {
   width: '360px',
   height: '80px',
 });
+
+// const { data: users } = useSWR('https://reqres.in/api/users', fetcher);
+// const getEntryValues = (values: { id: number, email: string }[]) => values?.map((item) => ({
+//   id: item.id,
+//   value: item.email,
+// }));

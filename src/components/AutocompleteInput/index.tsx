@@ -9,66 +9,65 @@ export interface ITextFieldItem {
   value: string
 }
 
-export const defaultValue: ITextFieldItem = { id: 0, value: '' };
-
 interface IAutocompleteInput{
   label: string,
   placeholder: string,
+  value: ITextFieldItem,
+  filterValue: string,
   disabled?: boolean,
   exactMatch?: boolean,
   timeout?: number,
-  value: ITextFieldItem,
-  getDataSource: () => ITextFieldItem[],
-  filterValue: (val: ITextFieldItem) => void,
-  onChange: (val: { event: React.ChangeEvent<HTMLInputElement>, value: ITextFieldItem['id'] }) => void,
-  onFilterValueChange: (val: { event: React.FormEvent<HTMLLIElement>, value: ITextFieldItem }) => void,
+  getDataSource: (val: string) => ITextFieldItem[],
+  onValueChange: (val: ITextFieldItem) => void,
+  onFilterValueChange: (val: string) => void,
 }
 
 const AutocompleteInput = ({
-  label, placeholder, disabled, timeout, getDataSource, value, filterValue, exactMatch, onChange, onFilterValueChange,
+  label, placeholder, disabled, timeout, getDataSource, filterValue, value, exactMatch, onValueChange, onFilterValueChange,
 }: IAutocompleteInput): React.ReactElement => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [event, setEvent] = React.useState<React.ChangeEvent<HTMLInputElement>>();
+  const [currentInputValue, setCurrentInputValue] = React.useState<string>('');
   const containerRef = useOutsideClick<HTMLUListElement>(open, () => setOpen(!open));
-  const dataSource = getDataSource();
+  const dataSource = getDataSource(filterValue);
   const isOpen = open && dataSource[0]?.value?.length > 0;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setEvent(e);
-
     const item = e.currentTarget.value;
+
+    onFilterValueChange(item);
 
     if (item.trim().length > 0) {
       setOpen(true);
     } else {
       setOpen(false);
     }
-
-    // @ts-ignore
-    filterValue((val) => ({ ...val, value: item }));
   };
+
+  React.useEffect(() => {
+    setCurrentInputValue(filterValue);
+  }, [filterValue]);
+
+  React.useEffect(() => {
+    if (value?.value?.length) {
+      setCurrentInputValue(value.value);
+    }
+  }, [value.value]);
 
   React.useEffect(() => {
     let intervalId: NodeJS.Timeout;
     if (exactMatch) {
-      if (value?.value?.length > 0) {
-        if (!dataSource.length) {
+      if (filterValue?.length > 0) {
+        if (!dataSource?.length) {
           intervalId = setInterval(() => {
-            filterValue(defaultValue);
+            setCurrentInputValue('');
           }, timeout);
         }
       }
     }
 
     return () => clearInterval(intervalId);
-  }, [dataSource.length, exactMatch, filterValue, timeout, value?.value?.length]);
-
-  React.useEffect(() => {
-    if (event) {
-      onChange({ event, value: value.id });
-    }
-  }, [event, onChange, value.id]);
+  }, [dataSource?.length, exactMatch, filterValue, timeout, filterValue?.length]);
 
   return (
     <Flex variants="column">
@@ -77,12 +76,12 @@ const AutocompleteInput = ({
           {label}
         </Label>
         <div>
-          {`Found items: ${dataSource.length}`}
+          {`Found items: ${isOpen ? dataSource?.length : ''}`}
         </div>
       </Flex>
       <Flex css={{ position: 'relative' }}>
         <ClearBox
-          onClick={() => filterValue(defaultValue)}
+          onClick={() => setCurrentInputValue('')}
         >
           <Image src="/image/delete.png" />
         </ClearBox>
@@ -95,7 +94,7 @@ const AutocompleteInput = ({
           placeholder={placeholder}
           disabled={disabled}
           onChange={handleChange}
-          value={value.value || ''}
+          value={currentInputValue}
           autoComplete="off"
         />
       </Flex>
@@ -107,9 +106,8 @@ const AutocompleteInput = ({
                 <TextFieldItem
                   data-testid="text-field-item"
                   key={item.value}
-                  onClick={(e) => {
-                    onFilterValueChange({ event: e, value: item });
-                    filterValue(item);
+                  onClick={() => {
+                    onValueChange(item);
                     setOpen(!open);
                   }}
                 >

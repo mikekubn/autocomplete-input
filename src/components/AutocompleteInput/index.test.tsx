@@ -2,7 +2,7 @@ import {
   fireEvent, render, screen,
 } from '@testing-library/react';
 import React from 'react';
-import AutocompleteInput, { defaultValue, ITextFieldItem } from '.';
+import AutocompleteInput, { ITextFieldItem } from '.';
 
 describe('Autocomplete Input', () => {
   it('render autocomplete input', () => {
@@ -22,27 +22,32 @@ describe('Autocomplete Input', () => {
 });
 
 const Component = () => {
-  const [currentValue, setCurentValue] = React.useState(defaultValue);
+  const [filterValueChange, setFilterValueChange] = React.useState<string>('');
+  const [valueChange, setValueChange] = React.useState<ITextFieldItem>({ id: 0, value: '' });
 
   return (
     <AutocompleteInput
       label="Test"
-      placeholder="Write here"
-      getDataSource={() => {
+      placeholder="Write here..."
+      getDataSource={(val) => {
         const entryValues = mock;
         let matches: ITextFieldItem[] = [];
-        matches = entryValues.filter((item: { id: number, value: string }) => {
-          const regex = new RegExp(`${entryValues[0].value}`, 'gi');
-          return item.value.match(regex);
-        });
+        if (val) {
+          if (val?.length > 0) {
+            matches = entryValues?.filter((item: { id: number, value: string }) => {
+              const regex = new RegExp(`${val}`, 'gi');
+              return item.value.match(regex);
+            });
+          }
+        }
         return matches;
       }}
-      filterValue={(val) => setCurentValue(val)}
-      value={currentValue}
+      filterValue={filterValueChange}
+      value={valueChange}
       exactMatch
-      timeout={500}
-      onChange={jest.fn()}
-      onFilterValueChange={jest.fn()}
+      timeout={1500}
+      onValueChange={(val) => setValueChange(val)}
+      onFilterValueChange={(val) => setFilterValueChange(val)}
     />
   );
 };

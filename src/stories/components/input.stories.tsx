@@ -1,6 +1,6 @@
 import { styled } from '@stitches/react';
 import React from 'react';
-import AutocompleteInput, { defaultValue, ITextFieldItem } from '../../components/AutocompleteInput/index';
+import AutocompleteInput, { ITextFieldItem } from '../../components/AutocompleteInput/index';
 
 export default {
   title: 'Components/AutocompleteInput',
@@ -37,93 +37,96 @@ const mock = [
 ];
 
 export const Default = (): React.ReactElement => {
-  const [curentValue, setCurentValue] = React.useState<ITextFieldItem>(defaultValue);
+  const [filterValueChange, setFilterValueChange] = React.useState<string>('');
+  const [valueChange, setValueChange] = React.useState<ITextFieldItem>({ id: 0, value: '' });
 
   return (
     <Wrapper>
       <AutocompleteInput
         label="Autocomplete Input"
         placeholder="Write here..."
-        getDataSource={() => {
+        getDataSource={(val) => {
           const entryValues = mock;
           let matches: ITextFieldItem[] = [];
-          if (curentValue) {
-            if (curentValue?.value?.length > 0) {
-              matches = entryValues.filter((item: { id: number, value: string }) => {
-                const regex = new RegExp(`${curentValue.value}`, 'gi');
+          if (val) {
+            if (val?.length > 0) {
+              matches = entryValues?.filter((item: { id: number, value: string }) => {
+                const regex = new RegExp(`${val}`, 'gi');
                 return item.value.match(regex);
               });
             }
           }
           return matches;
         }}
-        filterValue={(val) => setCurentValue(val)}
-        value={curentValue}
-        onChange={(val) => console.log('onChange', val)}
-        onFilterValueChange={(val) => console.log('onFilterValueChange', val)}
+        filterValue={filterValueChange}
+        value={valueChange}
+        onValueChange={(val) => setValueChange(val)}
+        onFilterValueChange={(val) => setFilterValueChange(val)}
       />
     </Wrapper>
   );
 };
 
 export const Disabled = (): React.ReactElement => {
-  const [curentValue, setCurentValue] = React.useState<ITextFieldItem>(defaultValue);
+  const [filterValueChange, setFilterValueChange] = React.useState<string>('');
+  const [valueChange, setValueChange] = React.useState<ITextFieldItem>({ id: 0, value: '' });
 
   return (
     <Wrapper>
       <AutocompleteInput
         label="Autocomplete Input"
         placeholder="Write here..."
-        getDataSource={() => {
+        getDataSource={(val) => {
           const entryValues = mock;
           let matches: ITextFieldItem[] = [];
-          if (curentValue) {
-            if (curentValue?.value?.length > 0) {
-              matches = entryValues.filter((item: { id: number, value: string }) => {
-                const regex = new RegExp(`${curentValue.value}`, 'gi');
+          if (val) {
+            if (val?.length > 0) {
+              matches = entryValues?.filter((item: { id: number, value: string }) => {
+                const regex = new RegExp(`${val}`, 'gi');
                 return item.value.match(regex);
               });
             }
           }
           return matches;
         }}
-        filterValue={(val) => setCurentValue(val)}
-        value={curentValue}
+        filterValue={filterValueChange}
+        value={valueChange}
         disabled
-        onChange={(val) => console.log('onChange', val)}
-        onFilterValueChange={(val) => console.log('onFilterValueChange', val)}
+        onValueChange={(val) => setValueChange(val)}
+        onFilterValueChange={(val) => setFilterValueChange(val)}
       />
     </Wrapper>
   );
 };
 
 export const ExactMatch = (): React.ReactElement => {
-  const [curentValue, setCurentValue] = React.useState<ITextFieldItem>(defaultValue);
+  const [filterValueChange, setFilterValueChange] = React.useState<string>('');
+  const [valueChange, setValueChange] = React.useState<ITextFieldItem>({ id: 0, value: '' });
 
   return (
     <Wrapper>
       <AutocompleteInput
         label="Autocomplete Input"
         placeholder="Write here..."
-        getDataSource={() => {
+        getDataSource={(val) => {
           const entryValues = mock;
           let matches: ITextFieldItem[] = [];
-          if (curentValue) {
-            if (curentValue?.value?.length > 0) {
-              matches = entryValues.filter((item: { id: number, value: string }) => {
-                const regex = new RegExp(`${curentValue.value}`, 'gi');
+          if (val) {
+            if (val?.length > 0) {
+              matches = entryValues?.filter((item: { id: number, value: string }) => {
+                const regex = new RegExp(`${val}`, 'gi');
                 return item.value.match(regex);
               });
             }
           }
           return matches;
         }}
-        filterValue={(val) => setCurentValue(val)}
-        value={curentValue}
+        filterValue={filterValueChange}
+        value={valueChange}
         exactMatch
         timeout={1500}
-        onChange={(val) => console.log('onChange', val)}
-        onFilterValueChange={(val) => console.log('onFilterValueChange', val)}
+        onValueChange={(val) => setValueChange(val)}
+        onFilterValueChange={(val) => setFilterValueChange(val)}
       />
     </Wrapper>
   );
